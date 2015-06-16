@@ -152,36 +152,34 @@ public class ModuleHandler {
         final PromotionReportView report = new PromotionReportView();
         report.setRootModule(DataModelFactory.createModule(module.getName(), module.getVersion()));
 
-        if(!report.isSnapshot()) {
-            // filters initialization
-            final FiltersHolder filters = new FiltersHolder();
-            filters.addFilter(new PromotedFilter(false));
-            filters.addFilter(new CorporateFilter(organization));
+        // filters initialization
+        final FiltersHolder filters = new FiltersHolder();
+        filters.addFilter(new PromotedFilter(false));
+        filters.addFilter(new CorporateFilter(organization));
 
-            // Checks if each dependency module has been promoted
-            for (Dependency dependency : depHandler.getModuleDependencies(moduleId, filters)) {
-                final DbModule depModule = repositoryHandler.getRootModuleOf(dependency.getTarget().getGavc());
-                if (depModule != null && !depModule.getId().equals(moduleId)) {
-                    if (!depModule.isPromoted()) {
-                        report.addUnPromotedDependency(depModule.getId());
-                        report.addDependencyPromotionReport(depModule.getId(), getPromotionReport(depModule.getId()));
-                    }
+        // Checks if each dependency module has been promoted
+        for (Dependency dependency : depHandler.getModuleDependencies(moduleId, filters)) {
+            final DbModule depModule = repositoryHandler.getRootModuleOf(dependency.getTarget().getGavc());
+            if (depModule != null && !depModule.getId().equals(moduleId)) {
+                if (!depModule.isPromoted()) {
+                    report.addUnPromotedDependency(depModule.getId());
+                    report.addDependencyPromotionReport(depModule.getId(), getPromotionReport(depModule.getId()));
                 }
             }
+        }
 
-            // Checks if the module has dependencies that shouldn't be used
-            final List<String> treatedArtifacts = new ArrayList<String>();
-            for (DbDependency dependency : DataUtils.getAllDbDependencies(module)) {
-                final DbArtifact artifactDep = repositoryHandler.getArtifact(dependency.getTarget());
+        // Checks if the module has dependencies that shouldn't be used
+        final List<String> treatedArtifacts = new ArrayList<String>();
+        for (DbDependency dependency : DataUtils.getAllDbDependencies(module)) {
+            final DbArtifact artifactDep = repositoryHandler.getArtifact(dependency.getTarget());
 
-                if (artifactDep == null) {
-                    // handle the case of a corporate artifact which is not available in the repository
-                    continue;
-                }
-                if (artifactDep.getDoNotUse() && !treatedArtifacts.contains(artifactDep.getGavc())) {
-                    report.addDoNotUseArtifact(modelMapper.getArtifact(artifactDep));
-                    treatedArtifacts.add(artifactDep.getGavc());
-                }
+            if (artifactDep == null) {
+                // handle the case of a corporate artifact which is not available in the repository
+                continue;
+            }
+            if (artifactDep.getDoNotUse() && !treatedArtifacts.contains(artifactDep.getGavc())) {
+                report.addDoNotUseArtifact(modelMapper.getArtifact(artifactDep));
+                treatedArtifacts.add(artifactDep.getGavc());
             }
         }
 

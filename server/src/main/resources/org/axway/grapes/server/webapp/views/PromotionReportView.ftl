@@ -84,11 +84,7 @@
                         </#if>
 
                     <#else>
-                        <#if isSnapshot()>
-                            <div id="promotion_ko"><strong>Snapshot module cannot be promoted!!!</strong><br/></div>
-                        <#else>
-                            <div id="promotion_ko"><strong>The module cannot be promoted!!!</strong><br/></div>
-                        </#if>
+                        <div id="promotion_ko"><strong>The module cannot be promoted!!!</strong><br/></div>
 
                         <#if getMisMatchModules()?has_content >
                             <h3>Warning: some dependencies occurs in different versions</h3>
