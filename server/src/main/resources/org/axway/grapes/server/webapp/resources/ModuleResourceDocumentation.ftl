@@ -458,7 +458,7 @@
                     </section>
                     <section id="module-buildinfo">
                         <a class="page-header btn-link" data-toggle="collapse" data-target="#accordion11">
-                            <h2>@ /module/{name}/{version}/buildinfo</h2>
+                            <h2>@ /module/{name}/{version}/buildInfo</h2>
                         </a>
                         <div id="accordion11" class="collapse">
                             <ul>
